@@ -1,14 +1,21 @@
 pipeline {
     agent any
+
+    tools {
+        maven 'Maven 3.8.1' // Adjust to match your configured Maven name
+    }
+
     options {
         skipStagesAfterUnstable()
     }
+
     stages {
         stage('Build') {
             steps {
                 bat 'mvn -B -DskipTests clean package'
             }
         }
+
         stage('Test') {
             steps {
                 bat 'mvn test'
@@ -19,10 +26,21 @@ pipeline {
                 }
             }
         }
-        stage('Deliver') { 
+
+        stage('Deliver') {
             steps {
-                bat './jenkins/scripts/deliver.sh' 
+                bat '''
+                echo Getting project name...
+                for /f "delims=" %%i in ('mvn -q -DforceStdout help:evaluate -Dexpression=project.name') do set NAME=%%i
+
+                echo Getting project version...
+                for /f "delims=" %%i in ('mvn -q -DforceStdout help:evaluate -Dexpression=project.version') do set VERSION=%%i
+
+                echo Running the application...
+                java -jar target\\%NAME%-%VERSION%.jar
+                '''
             }
         }
     }
 }
+
