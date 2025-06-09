@@ -26,29 +26,6 @@ pipeline {
                 }
             }
         }
-
-stage('Deliver') {
-    steps {
-        bat '''
-        echo Getting project name...
-        for /f "delims=" %%i in ('mvn -q -DforceStdout help:evaluate -Dexpression=project.name') do set NAME=%%i
-
-        echo Getting project version...
-        for /f "delims=" %%i in ('mvn -q -DforceStdout help:evaluate -Dexpression=project.version') do set VERSION=%%i
-
-        echo Resolved NAME: %NAME%
-        echo Resolved VERSION: %VERSION%
-
-        if not exist target\\%NAME%-%VERSION%.jar (
-            echo ERROR: JAR file not found at target\\%NAME%-%VERSION%.jar
-            exit /b 1
-        )
-
-        echo Running the application...
-        java -jar target\\%NAME%-%VERSION%.jar
-        '''
     }
     }
-    }
-}
 
