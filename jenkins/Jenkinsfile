@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven 3.8.1' // Adjust to match your configured Maven name
+        maven 'maven-309.9' // Adjust to match your configured Maven name
     }
 
     options {
